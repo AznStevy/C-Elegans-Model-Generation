@@ -1,4 +1,4 @@
-# C-Elegans-Model-Generation
+# C. Elegans Model Generation
 
 ## Configuration File
 **Location**: `config.json`
