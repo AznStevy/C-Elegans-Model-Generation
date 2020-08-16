@@ -13,19 +13,14 @@
         "voxel_to_micron_scale": [0.1625, 0.1625, 0.1625],
         "outlier_removal": {
             "remove_outliers": true,
-            "n_stdev": 1,
+            "n_stdev": 5,
             "window_size": 5
         },
         "interpolation": {
             "total_min": 420,
-            "method": "cubic",
+            "min_timepoints_required": 3,
+            "method": "linear",
             "seam_cells_on": {
-                "A1L": 0,
-                "A1R": 0,
-                "A2L": 0,
-                "A2R": 0,
-                "A3L": 0,
-                "A3R": 0,
                 "H0L": 0,
                 "H0R": 0,
                 "H1L": 0,
@@ -40,8 +35,8 @@
                 "V3L": 0,
                 "V4L": 0,
                 "V4R": 0,
-                "QL": 0.75,
-                "QR": 0.75,
+                "QL": 0.667,
+                "QR": 0.667,
                 "V5L": 0,
                 "V5R": 0,
                 "V6L": 0,
@@ -50,20 +45,44 @@
                 "TR": 0
             }
         },
-        "checks": {
-            "insufficient_timepoints": 10
+        "warping": {
+            "seam_cells": [
+                "H0L", 
+                "H0R", 
+                "H1L", 
+                "H1R", 
+                "H2L", 
+                "H2R", 
+                "V1R", 
+                "V1L", 
+                "V2R", 
+                "V2L",
+                "V3R",
+                "V3L",
+                "V4L",
+                "V4R",
+                "V5L",
+                "V5R",
+                "V6L",
+                "V6R",
+                "TL",
+                "TR"
+            ]
+        },
+        "smoothing": {
+        	"window_size": 20
         }
     },
     "data": {
         "seam_cells": [
-            "Y:\\RyanC\\Cell Tracking Project\\RW10752_NU\\031219_Pos2",
-            "Y:\\RyanC\\Cell Tracking Project\\RW10752_NU\\031219_Pos1",
-            "Y:\\RyanC\\Cell Tracking Project\\RW10752_NU\\022519_Pos0"
+                    "Y:\\RyanC\\Cell Tracking Project\\JCC596_NU\\091119_Pos3\\Decon_registered",
+                    "Y:\\RyanC\\Cell Tracking Project\\JCC596_NU\\091119_Pos2\\Decon_registered",
+                    "Y:\\RyanC\\Cell Tracking Project\\JCC596_NU\\082619_Pos3\\Decon_registered"
         ],
         "strains": [
             {
                 "name": "OD1599_NU",
-                "include": true,
+                "include": false,
                 "folderpaths": [
                     "Y:\\RyanC\\Cell Tracking Project\\OD1599_NU\\OD1599_MostRecent\\120619_Pos2\\Decon_reg",
                     "Y:\\RyanC\\Cell Tracking Project\\OD1599_NU\\OD1599_MostRecent\\112719_Pos3\\Decon_Reg",
@@ -71,8 +90,17 @@
                 ]
             },
             {
-                "name": "JCC596_NU",
+                "name": "DCR6485_RPM1_NU",
                 "include": false,
+                "folderpaths": [
+                    "Y:\\RyanC\\Cell Tracking Project\\DCR6485_RPM1_NU\\011419_Pos0\\Decon_reg",
+                    "Y:\\RyanC\\Cell Tracking Project\\DCR6485_RPM1_NU\\011419_Pos4\\Decon_reg",
+                    "Y:\\RyanC\\Cell Tracking Project\\DCR6485_RPM1_NU\\021020_Pos2\\Decon_Reg"
+                ]
+            },
+            {
+                "name": "JCC596_NU",
+                "include": true,
                 "folderpaths": [
                     "Y:\\RyanC\\Cell Tracking Project\\JCC596_NU\\091119_Pos3\\Decon_registered",
                     "Y:\\RyanC\\Cell Tracking Project\\JCC596_NU\\091119_Pos2\\Decon_registered",
@@ -81,7 +109,7 @@
             },            
             {
                 "name": "KP9305_NU",
-                "include": true,
+                "include": false,
                 "folderpaths": [
                     "Y:\\RyanC\\Cell Tracking Project\\KP9305_NU\\073018_KP9305_NU\\Pos0",
                     "Y:\\RyanC\\Cell Tracking Project\\KP9305_NU\\073018_KP9305_NU\\Pos4",
@@ -90,7 +118,7 @@
             },
             {
                 "name": "RW10752_NU",
-                "include": true,
+                "include": false,
                 "folderpaths": [
                     "Y:\\RyanC\\Cell Tracking Project\\RW10752_NU\\031219_Pos2",
                     "Y:\\RyanC\\Cell Tracking Project\\RW10752_NU\\031219_Pos1",
