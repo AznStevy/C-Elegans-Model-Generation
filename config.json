@@ -71,18 +71,21 @@
         },
         "smoothing": {
         	"window_size": 20
+        },
+        "mipav_output": {
+        	"labels_on": true
         }
     },
     "data": {
         "seam_cells": [
-                    "Y:\\RyanC\\Cell Tracking Project\\JCC596_NU\\091119_Pos3\\Decon_registered",
-                    "Y:\\RyanC\\Cell Tracking Project\\JCC596_NU\\091119_Pos2\\Decon_registered",
-                    "Y:\\RyanC\\Cell Tracking Project\\JCC596_NU\\082619_Pos3\\Decon_registered"
+                    "Y:\\RyanC\\Cell Tracking Project\\OD1599_NU\\OD1599_MostRecent\\120619_Pos2\\Decon_reg",
+                    "Y:\\RyanC\\Cell Tracking Project\\OD1599_NU\\OD1599_MostRecent\\112719_Pos3\\Decon_Reg",
+                    "Y:\\RyanC\\Cell Tracking Project\\OD1599_NU\\OD1599_MostRecent\\112619_Pos0\\Decon_reg"
         ],
         "strains": [
             {
                 "name": "OD1599_NU",
-                "include": false,
+                "include": true,
                 "folderpaths": [
                     "Y:\\RyanC\\Cell Tracking Project\\OD1599_NU\\OD1599_MostRecent\\120619_Pos2\\Decon_reg",
                     "Y:\\RyanC\\Cell Tracking Project\\OD1599_NU\\OD1599_MostRecent\\112719_Pos3\\Decon_Reg",
@@ -91,7 +94,7 @@
             },
             {
                 "name": "DCR6485_RPM1_NU",
-                "include": false,
+                "include": true,
                 "folderpaths": [
                     "Y:\\RyanC\\Cell Tracking Project\\DCR6485_RPM1_NU\\011419_Pos0\\Decon_reg",
                     "Y:\\RyanC\\Cell Tracking Project\\DCR6485_RPM1_NU\\011419_Pos4\\Decon_reg",
@@ -100,7 +103,7 @@
             },
             {
                 "name": "JCC596_NU",
-                "include": true,
+                "include": false,
                 "folderpaths": [
                     "Y:\\RyanC\\Cell Tracking Project\\JCC596_NU\\091119_Pos3\\Decon_registered",
                     "Y:\\RyanC\\Cell Tracking Project\\JCC596_NU\\091119_Pos2\\Decon_registered",
