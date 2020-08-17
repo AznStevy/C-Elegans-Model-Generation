@@ -9,7 +9,7 @@
 ![download image](https://i.imgur.com/9MlhHNI.png "Download Image")
 
 ## Normal Usage
-To start up the script, navigate to the root directory of the project folder in a terminal and enter `jupyter notebook c_elegans_model_building.py`. This will then open up the jupyter notebook in your default browser. If this doesn't work, then look in the terminal for a link and the copy-paste that into your browser of choice. Afterwards, the only thing the should potentially be edited is the `name = ` variable on the very first line. After the program is run, the output/workspace will be in a subfolder within the `workspace` folder with this `name` preceeded by a run date.
+This code is written so that you will NEVER have to touch the code, only the `config.json` and `cell_key.json` files. To start up the script, navigate to the root directory of the project folder in a terminal and enter `jupyter notebook c_elegans_model_building.py`. This will then open up the jupyter notebook in your default browser. If this doesn't work, then look in the terminal for a link and the copy-paste that into your browser of choice. Afterwards, the only thing the should potentially be edited is the `name = ` variable on the very first line. After the program is run, the output/workspace will be in a subfolder within the `workspace` folder with this `name` preceeded by a run date.
 
 ![edit_name](https://i.imgur.com/QxpVbHJ.png "Edit Name")
 
@@ -27,7 +27,24 @@ For the `config.json` file in this directory prior to your first run, make sure 
 }
 ```
 
-Make sure that in these filepaths that you have listed, there is either a `CellKey.xlsx` or `cell_key.json` file. If there is a `CellKey.xlsx` file, but no `cell_key.json` file, the program will parse the Excel file and auotmatically generate the `cell_key.json` file. The program will always prioritize the `.json` file and ignore the `xlsx` file, so make edits in the `.json` file if it's there. Afterwards, hit the "Restart + Run" button on the toolbar which looks like a double forward arrow:
+Make sure that in these filepaths that you have listed, there is either a `CellKey.xlsx` or `cell_key.json` file. If there is a `CellKey.xlsx` file, but no `cell_key.json` file, the program will parse the Excel file and auotmatically generate the `cell_key.json` file. The program will always prioritize the `.json` file and ignore the `xlsx` file, so make edits in the `.json` file if it's there. This file should look something like what's shown below. If the folder structure of a specific worm is different, reference the [cell key](#cell-key-file) section
+
+```json
+{
+    "end": 108,
+    "mapping": {
+        "A1": "cell_name_1",
+        "A2": "cell_name_20",
+        "A3": "cell_name_5",
+    },
+    "name": "OD1599_NU_1206_Pos2",
+    "outliers": [],
+    "start": 15
+}
+```
+
+
+Afterwards, hit the "Restart + Run" button on the toolbar which looks like a double forward arrow:
 
 ![run script](https://i.imgur.com/k2avJS1.png)
 
