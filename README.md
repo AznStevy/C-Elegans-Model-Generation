@@ -103,6 +103,14 @@ The `smoothing` section is part of Step 4 which generates the warping model and 
 }
 ```
 
+The `mipav_output` section is a part of Step 8, which takes the model and converts from dict/json format to csv format so that MIPAV can generate the appropriate animation. The `labels_on` parameter denotes whether or not labels should be present in the MIPAV animation. It takes a boolean value, `true` or `false`, case sensitive.
+
+```json
+"mipav_output": {
+    "labels_on": true
+}
+```
+
 ### The `data` section
 
 The data section contains additional sections as well: `seam_cells` and `strains`. The `seam_cells` section is a list of folder paths/positions to use to create the warping model in Step 4.
