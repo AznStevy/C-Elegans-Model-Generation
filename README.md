@@ -259,3 +259,9 @@ After all of the worms in each strain have been warped, Step 6 averages all of t
 After all of the seam cells and annotations have been averaged, Step 7 smoothes via moving average for each cell by dimension according to the window defined in `settings -> smoothing -> window_size`. The output of this step is located in the workspace folder as `7_cell_coordinates_by_timepoint_smoothed.json`. With this step, the model is now complete.
 
 **Errors:** This step currently does not log any errors.
+
+### Step 8: Output model into MIPAV-readable format
+
+This step takes the model and simply outputs it into the `output` folder in the workspace. The program will print out a filepath that can be used with the Untwising Plugin for MIPAV. Simply put this filepath in the "Data directory (marker 1)" field in the GUI and select "create annotation animation" in the Build/Edit section. This will create an `animation` folder in the `output` folder which can then be post-processed using another software like ImageJ.
+
+**Errors:** This step currently does not log any errors.
