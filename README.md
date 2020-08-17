@@ -1,4 +1,37 @@
 # C. Elegans Model Generation
+## Setup
+**Anaconda**: I highly recommend you get the Anaconda distribution for Python which can be found [here](https://www.anaconda.com/products/individual). When you install, make sure that you check the box for **"ADD TO PATH"** so that you can run jupyter notebook from the command line.
+
+**Plotly**: In case you are interested in running visualizations and after you've installed Anaconda, run `conda install -c plotly plotly`.
+
+**Download Script**: Because this script is located on GitHub, you should be able to download the latest version just by clicking the "Code" button on the top-right corner and then clicking "Download ZIP".
+
+![download image](https://i.imgur.com/9MlhHNI.png "Download Image")
+
+## Normal Usage
+To start up the script, navigate to the root directory of the project folder in a terminal and enter `jupyter notebook c_elegans_model_building.py`. This will then open up the jupyter notebook in your default browser. If this doesn't work, then look in the terminal for a link and the copy-paste that into your browser of choice. Afterwards, the only thing the should potentially be edited is the `name = ` variable on the very first line. After the program is run, the output/workspace will be in a subfolder within the `workspace` folder with this `name` preceeded by a run date.
+
+![edit_name](https://i.imgur.com/QxpVbHJ.png "Edit Name")
+
+For the `config.json` file in this directory prior to your first run, make sure that all the filepaths and drive letters are correct since it might be different for different computers. After this check, the only thing that you should ever be editing is the `data -> strains` section by adding to the list that's already there. Make sure that you have the sections `name` which you can choose, `include` is set to `true` if you want it included in the model, and `folderpaths` is a ___list___ of folder locations where the RegA/RegB folders are. A new entry will look something like this, but with a real filepath:
+
+```json
+{
+    "name": "KP9305_NU",
+    "include": true,
+    "folderpaths": [
+        "Y:\\-\\Cell Tracking Project\\KP9305_NU\\073018_KP9305_NU\\Pos0",
+        "Y:\\-\\Cell Tracking Project\\KP9305_NU\\073018_KP9305_NU\\Pos4",
+        "Y:\\-\\Cell Tracking Project\\KP9305_NU\\073018_KP9305_NU\\Pos2"
+    ]
+}
+```
+
+Make sure that in these filepaths that you have listed, there is either a `CellKey.xlsx` or `cell_key.json` file. If there is a `CellKey.xlsx` file, but no `cell_key.json` file, the program will parse the Excel file and auotmatically generate the `cell_key.json` file. The program will always prioritize the `.json` file and ignore the `xlsx` file, so make edits in the `.json` file if it's there. Afterwards, hit the "Restart + Run" button on the toolbar which looks like a double forward arrow:
+
+![run script](https://i.imgur.com/k2avJS1.png)
+
+You might be prompted to clear variables; just type 'y' to start a clean run. While the script runs, you will see outputs for potential errors as well as steps. If you wish to ignore the errors, then that's fine, but some will break the code. After the code is completed at Step 8, you will see a `Output location:` filepath for where the model as been placed. You can then stick this into MIPAV to generate a model. For more information about the `config.json` and `cell_key.json` files, read below.
 
 ## Configuration File
 **Location**: `config.json`
