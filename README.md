@@ -271,6 +271,7 @@ First thing you should do is **define the name of the run**, maybe use something
 This goes through each of the folders from the `config.json` defined in the `data -> strains` section and loads it into a variable called `compiled_data`. This variable contains each strain's worms as well as each worm's `cell_key`, `seam_cells`, `annotations`, and `errors` found while parsing (more on this below). The program uses a `cell_keys.json` as defined above instead of a `CellKey.xls` for ease of importing the information. However, if a `CellKeys.xlsx` does not exist according to the `get_cell_key`, then the program will try to automatically generate a `cell_keys.json` based of of what's in the Excel file; this operation is performed by the `convert_cell_key_csv2json` function. The output of this step is located in the workspace folder as `1_compiled_data.json`.
 
 **Errors:** In this step, errors are determined within the `get_cell_key` and `parse_mipav_data` functions. Here is a list of checks that it currently does + prints/logs:
+
 - If there is neither a `cell_key.json` or `CellKeys.xlsx` file.
 - If there is an empty seam cell file.
 - If there is an empty annotation file.
