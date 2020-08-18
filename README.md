@@ -1,10 +1,10 @@
 # C. Elegans Model Generation
 ## Setup
-**Anaconda**: I highly recommend you get the Anaconda distribution for Python which can be found [here](https://www.anaconda.com/products/individual). When you install, make sure that you check the box for **"ADD TO PATH"** so that you can run jupyter notebook from the command line.
+**Anaconda**: I highly recommend you get the Anaconda distribution for Python which can be found [here](https://www.anaconda.com/products/individual). When you install, make sure that you check the box for **"ADD TO PATH"** so that you can run jupyter notebook from the command line. To open up the command line/terminal, navigate to the start menu and search for "Command Prompt" or "Powershell" on Windows. Then navigate to the project folder by typing `cd "C:\This_Project_Path"`.
 
 **Plotly**: In case you are interested in running visualizations and after you've installed Anaconda, run `conda install -c plotly plotly`.
 
-**Download Script**: Because this script is located on GitHub, you should be able to download the latest version just by clicking the "Code" button on the top-right corner and then clicking "Download ZIP".
+**Download Script**: Because this script is located on GitHub, you should be able to download the latest version just by clicking the "Code" button on the top-right corner and then clicking "Download ZIP". You will then need to unzip this.
 
 ![download image](https://i.imgur.com/9MlhHNI.png "Download Image")
 
