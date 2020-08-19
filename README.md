@@ -1,4 +1,13 @@
 # C. Elegans Model Generation
+
+- [Setup](#setup)
+- [Normal Usage](#normal-usage)
+- [Configuration File](#configuration-file)
+    - [The settings section](#the-settings-section)
+    - [The data section](#the-data-section)
+- [Cell Key File](#cell-key-file)
+- [Model Generation Outline](#cell-key-file)
+
 ## Setup
 **Anaconda**: I highly recommend you get the Anaconda distribution for Python which can be found [here](https://www.anaconda.com/products/individual). When you install, make sure that you check the box for **"ADD TO PATH"** so that you can run jupyter notebook from the command line. 
 
@@ -7,6 +16,8 @@
 **Download Script**: Because this script is located on GitHub, you should be able to download the latest version just by clicking the "Code" button on the top-right corner and then clicking "Download ZIP"; you will then need to unzip this. To open up the command line/terminal, navigate to the start menu and search for "Command Prompt" or "Powershell" on Windows. Then navigate to the project folder by typing `cd "C:\This_Project_Path"`.
 
 ![download image](https://i.imgur.com/9MlhHNI.png "Download Image")
+
+[Go to top](#c-elegans-model-generation)
 
 ## Normal Usage
 This code is written so that you will NEVER have to touch the code, only the `config.json` and `cell_key.json` files. To start up the script, navigate to the root directory of the project folder in a terminal and enter `jupyter notebook c_elegans_model_building.py`. This will then open up the jupyter notebook in your default browser. If this doesn't work, then look in the terminal for a link and the copy-paste that into your browser of choice. Afterwards, the only thing the should potentially be edited is the `name = ` variable on the very first line. After the program is run, the output/workspace will be in a subfolder within the `workspace` folder with this `name` preceeded by a run date.
@@ -49,6 +60,8 @@ Afterwards, hit the "Restart + Run" button on the toolbar which looks like a dou
 ![run script](https://i.imgur.com/k2avJS1.png)
 
 You might be prompted to clear variables; just type 'y' to start a clean run. While the script runs, you will see outputs for potential errors as well as steps. If you wish to ignore the errors, then that's fine, but some will break the code. After the code is completed at Step 8, you will see a `Output location:` filepath for where the model as been placed. You can then stick this into MIPAV to generate a model. For more information about the `config.json` and `cell_key.json` files, read below.
+
+[Go to top](#c-elegans-model-generation)
 
 ## Configuration File
 **Location**: `config.json`
@@ -161,6 +174,8 @@ The `mipav_output` section is a part of Step 8, which takes the model and conver
 }
 ```
 
+[Go to top](#c-elegans-model-generation)
+
 ### The `data` section
 
 The data section contains additional sections as well: `seam_cells` and `strains`. The `seam_cells` section is a list of folder paths/positions to use to create the warping model in Step 4.
@@ -198,6 +213,8 @@ The `strains` section contains a list of information regarding the strains. Each
 ]
 ```
 
+[Go to top](#c-elegans-model-generation)
+
 ## Cell Key File
 **Location**: This file should be located in whatever folder that contains your Reg A/Reg B folders defined in the `config.json` file in the root directory. It should be named `cell_key.json`. Currently, if you have a `CellKey.xlsx` file, the program will automatically generate a json file for you as long as it follows the older format. After this is done, you should go back and check that this information is correct.
 
@@ -224,6 +241,8 @@ The `strains` section contains a list of information regarding the strains. Each
     "start": 15
 }
 ```
+
+[Go to top](#c-elegans-model-generation)
 
 ### Overiding Defaults
 Because MIPAV has changed over the course of this project, we need a way to account for different file structures. If you include a `folderpaths` section like from the config file here, it will read in data according to this structure instead.
@@ -258,9 +277,11 @@ Because MIPAV has changed over the course of this project, we need a way to acco
 }
 ```
 
+[Go to top](#c-elegans-model-generation)
+
 ## Model Generation Outline
 
-The generation of the model is broken down into 7 major steps and I'll be outlining them here.
+The generation of the model is broken down into 8 major steps and I'll be outlining them here.
 
 ### Pre-run Processing
 
@@ -324,3 +345,5 @@ After all of the seam cells and annotations have been averaged, Step 7 smoothes 
 This step takes the model and simply outputs it into the `output` folder in the workspace. The parameters used here are located in  `settings -> mipav_output -> labels_on` which takes a boolean value (`true` or `false`, case sensitive). The program will print out a filepath that can be used with the Untwising Plugin for MIPAV. Simply put this filepath in the "Data directory (marker 1)" field in the GUI and select "create annotation animation" in the Build/Edit section. This will create an `animation` folder in the `output` folder which can then be post-processed using another software like ImageJ.
 
 **Errors:** This step currently does not log any errors.
+
+[Go to top](#c-elegans-model-generation)
