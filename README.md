@@ -6,7 +6,7 @@
     - [The settings section](#the-settings-section)
     - [The data section](#the-data-section)
 - [Cell Key File](#cell-key-file)
-- [Model Generation Outline](#cell-key-file)
+- [Model Generation Outline](#model-generation-outline)
 
 ## Setup
 **Anaconda**: I highly recommend you get the Anaconda distribution for Python which can be found [here](https://www.anaconda.com/products/individual). When you install, make sure that you check the box for **"ADD TO PATH"** so that you can run jupyter notebook from the command line. 
