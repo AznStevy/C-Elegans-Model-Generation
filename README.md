@@ -283,7 +283,12 @@ Because MIPAV has changed over the course of this project, we need a way to acco
 [Go to top](#c-elegans-model-generation)
 
 ## Cell Info File
-The `cell_info.json` file is used primarily in Step 8 to generate the visualization. It contains the cell type and colors at certain points in the worm's development. An example entry is shown below. The first level is the cell itself. The next level contains `colors` and `type`. `type` refers to the general cell type and the default parameters it will take if it is defined. However, `colors` will always override `type` attributes. The `colors` is organized by the time between twitch and hatch, from 0-1, and the respective color as an RGB list at that time. If there is only one color, it is used throughout the entire model, but if there are multiple, then there will be linear interpolation of each channel.
+
+**Location**: `cell_info.json`. Make sure that the `settings -> model_output -> cell_info` parameter in `config.json` points to this file. You can change the name as long as it's consistent across the two `.json` files.
+
+**Purpose**: The `cell_info.json` file is used primarily in Step 8 to generate the visualization. It contains the cell type and colors at certain points in the worm's development. 
+
+**Usage**:  An example entry is shown below. The first level is the cell itself. The next level contains `colors` and `type`. `type` refers to the general cell type and the default parameters it will take if it is defined. However, `colors` will always override `type` attributes. The `colors` is organized by the time between twitch and hatch, from 0-1, and the respective color as an RGB list at that time. If there is only one color, it is used throughout the entire model, but if there are multiple, then there will be linear interpolation of each channel.
 
 ```json
 "adeshl": {
