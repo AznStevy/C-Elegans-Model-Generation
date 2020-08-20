@@ -73,15 +73,15 @@
         	"window_size": 20
         },
         "mipav_output": {
-        	"labels_on": true
+        	"labels_on": true,
+        	"cell_info": "cell_info.json"
         }
     },
     "data": {
         "seam_cells": [
                     "Y:\\RyanC\\Cell Tracking Project\\OD1599_NU\\OD1599_MostRecent\\120619_Pos2\\Decon_reg",
                     "Y:\\RyanC\\Cell Tracking Project\\OD1599_NU\\OD1599_MostRecent\\112719_Pos3\\Decon_Reg",
-                    "Y:\\RyanC\\Cell Tracking Project\\OD1599_NU\\OD1599_MostRecent\\112619_Pos0\\Decon_reg"
-        ],
+                    "Y:\\RyanC\\Cell Tracking Project\\OD1599_NU\\OD1599_MostRecent\\112619_Pos0\\Decon_reg"        ],
         "strains": [
             {
                 "name": "OD1599_NU",
