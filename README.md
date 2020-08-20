@@ -6,7 +6,9 @@
     - [The settings section](#the-settings-section)
     - [The data section](#the-data-section)
 - [Cell Key File](#cell-key-file)
+- [Cell Info File](#cell-info-file)
 - [Model Generation Outline](#model-generation-outline)
+- [Visualization](#visualization)
 
 ## Setup
 **Anaconda**: I highly recommend you get the Anaconda distribution for Python which can be found [here](https://www.anaconda.com/products/individual). When you install, make sure that you check the box for **"ADD TO PATH"** so that you can run jupyter notebook from the command line. 
@@ -166,11 +168,12 @@ The `smoothing` section is part of Step 4 which generates the warping model and 
 }
 ```
 
-The `mipav_output` section is a part of Step 8, which takes the model and converts from dict/json format to csv format so that MIPAV can generate the appropriate animation. The `labels_on` parameter denotes whether or not labels should be present in the MIPAV animation. It takes a boolean value, `true` or `false`, case sensitive.
+The `mipav_output` section is a part of Step 8, which takes the model and converts from dict/json format to csv format so that MIPAV can generate the appropriate animation. The `labels_on` parameter denotes whether or not labels should be present in the MIPAV animation. It takes a boolean value, `true` or `false`, case sensitive. The `cell_info` parameter takes a file with respect to the project directory that contains information about a cell's type and color in the animation. More on this in the [cell_info](#cell-info-file) section
 
 ```json
 "mipav_output": {
-    "labels_on": true
+    "labels_on": true,
+    "cell_info": "cell_info.json"
 }
 ```
 
@@ -279,6 +282,24 @@ Because MIPAV has changed over the course of this project, we need a way to acco
 
 [Go to top](#c-elegans-model-generation)
 
+## Cell Info File
+The `cell_info.json` file is used primarily in Step 8 to generate the visualization. It contains the cell type and colors at certain points in the worm's development. An example entry is shown below. The first level is the cell itself. The next level contains `colors` and `type`. `type` refers to the general cell type and the default parameters it will take if it is defined. However, `colors` will always override `type` attributes. The `colors` is organized by the time between twitch and hatch, from 0-1, and the respective color as an RGB list at that time. If there is only one color, it is used throughout the entire model, but if there are multiple, then there will be linear interpolation of each channel.
+
+```json
+"adeshl": {
+    "colors": {
+        "0.00000": [
+            255.0,
+            255.0,
+            255.0
+        ]
+    },
+    "type": null
+}
+```
+
+[Go to top](#c-elegans-model-generation)
+
 ## Model Generation Outline
 
 The generation of the model is broken down into 8 major steps and I'll be outlining them here.
@@ -345,5 +366,12 @@ After all of the seam cells and annotations have been averaged, Step 7 smoothes 
 This step takes the model and simply outputs it into the `output` folder in the workspace. The parameters used here are located in  `settings -> mipav_output -> labels_on` which takes a boolean value (`true` or `false`, case sensitive). The program will print out a filepath that can be used with the Untwising Plugin for MIPAV. Simply put this filepath in the "Data directory (marker 1)" field in the GUI and select "create annotation animation" in the Build/Edit section. This will create an `animation` folder in the `output` folder which can then be post-processed using another software like ImageJ.
 
 **Errors:** This step currently does not log any errors.
+
+[Go to top](#c-elegans-model-generation)
+
+## Visualization
+After the model is generated, there are two ways to view the model. One is to put the output of Step 8 into MIPAV, the alternative is to use the `c_elegans_visualization.ipynb` file. Similar to the model building script, open this by running `jupyter notebook c_elegans_visualization.ipynb` and it should pop up into your default browser. In the first code block, edit the `model_name` to the corresponding model in the workspace. You can also edit the Step number to check if intermediates are correct, but normally it should be set to 7 which is the last step. When you hit `restart + run` like before, the code will generate a `visualizations` folder within the model workspace containing several different plots (2D in different axes + 3D) like the one shown below.
+
+![visualization](https://i.imgur.com/iw4eeXa.png "Visualization")
 
 [Go to top](#c-elegans-model-generation)
