@@ -13,12 +13,12 @@
         "voxel_to_micron_scale": [0.1625, 0.1625, 0.1625],
         "outlier_removal": {
             "remove_outliers": true,
-            "n_stdev": 5,
-            "window_size": 5
+            "n_stdev": 2,
+            "window_size": 10
         },
         "interpolation": {
             "total_min": 420,
-            "min_timepoints_required": 3,
+            "min_timepoints_required": 2,
             "method": "linear",
             "seam_cells_on": {
                 "H0L": 0,
@@ -79,13 +79,14 @@
     },
     "data": {
         "seam_cells": [
-                    "Y:\\RyanC\\Cell Tracking Project\\OD1599_NU\\OD1599_MostRecent\\120619_Pos2\\Decon_reg",
-                    "Y:\\RyanC\\Cell Tracking Project\\OD1599_NU\\OD1599_MostRecent\\112719_Pos3\\Decon_Reg",
-                    "Y:\\RyanC\\Cell Tracking Project\\OD1599_NU\\OD1599_MostRecent\\112619_Pos0\\Decon_reg"        ],
+                    "Y:\\RyanC\\Cell Tracking Project\\KP9305_NU\\073018_KP9305_NU\\Pos0",
+                    "Y:\\RyanC\\Cell Tracking Project\\KP9305_NU\\073018_KP9305_NU\\Pos4",
+                    "Y:\\RyanC\\Cell Tracking Project\\KP9305_NU\\073018_KP9305_NU\\Pos2"
+        			],
         "strains": [
             {
                 "name": "OD1599_NU",
-                "include": true,
+                "include": false,
                 "folderpaths": [
                     "Y:\\RyanC\\Cell Tracking Project\\OD1599_NU\\OD1599_MostRecent\\120619_Pos2\\Decon_reg",
                     "Y:\\RyanC\\Cell Tracking Project\\OD1599_NU\\OD1599_MostRecent\\112719_Pos3\\Decon_Reg",
@@ -94,7 +95,7 @@
             },
             {
                 "name": "DCR6485_RPM1_NU",
-                "include": true,
+                "include": false,
                 "folderpaths": [
                     "Y:\\RyanC\\Cell Tracking Project\\DCR6485_RPM1_NU\\011419_Pos0\\Decon_reg",
                     "Y:\\RyanC\\Cell Tracking Project\\DCR6485_RPM1_NU\\011419_Pos4\\Decon_reg",
@@ -112,7 +113,7 @@
             },            
             {
                 "name": "KP9305_NU",
-                "include": false,
+                "include": true,
                 "folderpaths": [
                     "Y:\\RyanC\\Cell Tracking Project\\KP9305_NU\\073018_KP9305_NU\\Pos0",
                     "Y:\\RyanC\\Cell Tracking Project\\KP9305_NU\\073018_KP9305_NU\\Pos4",
