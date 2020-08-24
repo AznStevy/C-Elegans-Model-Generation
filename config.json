@@ -70,23 +70,21 @@
             ]
         },
         "smoothing": {
-        	"window_size": 20
+        	"window_size": 150
         },
         "mipav_output": {
-        	"labels_on": true,
+        	"labels_on": false,
         	"cell_info": "cell_info.json"
         }
     },
     "data": {
         "seam_cells": [
-                    "Y:\\RyanC\\Cell Tracking Project\\KP9305_NU\\073018_KP9305_NU\\Pos0",
-                    "Y:\\RyanC\\Cell Tracking Project\\KP9305_NU\\073018_KP9305_NU\\Pos4",
-                    "Y:\\RyanC\\Cell Tracking Project\\KP9305_NU\\073018_KP9305_NU\\Pos2"
+                    "Y:\\RyanC\\model_building_code\\resources\\warping_models\\jul-11-2019_warping_model.json"
         			],
         "strains": [
             {
                 "name": "OD1599_NU",
-                "include": false,
+                "include": true,
                 "folderpaths": [
                     "Y:\\RyanC\\Cell Tracking Project\\OD1599_NU\\OD1599_MostRecent\\120619_Pos2\\Decon_reg",
                     "Y:\\RyanC\\Cell Tracking Project\\OD1599_NU\\OD1599_MostRecent\\112719_Pos3\\Decon_Reg",
@@ -113,7 +111,7 @@
             },            
             {
                 "name": "KP9305_NU",
-                "include": true,
+                "include": false,
                 "folderpaths": [
                     "Y:\\RyanC\\Cell Tracking Project\\KP9305_NU\\073018_KP9305_NU\\Pos0",
                     "Y:\\RyanC\\Cell Tracking Project\\KP9305_NU\\073018_KP9305_NU\\Pos4",
