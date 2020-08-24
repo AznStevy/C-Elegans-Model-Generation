@@ -1,7 +1,7 @@
 import numpy as np
 
 # try thin plate spline warping
-def thin_plate_spline_warp(warped_pts, ctrl_pts, obj_to_warp):
+def thin_plate_spline_warp_xyz(warped_pts, ctrl_pts, obj_to_warp):
 
     # convert everything to np array
     warped_pts = np.array(warped_pts)
@@ -55,6 +55,17 @@ def thin_plate_spline_warp(warped_pts, ctrl_pts, obj_to_warp):
 
     return object_warped
 
+def thin_plate_spline_warp_xz(warped_pts, ctrl_pts, obj_to_warp):
+    object_warped = thin_plate_spline_warp_xyz(warped_pts, ctrl_pts, obj_to_warp)
+
+    # go through, if x, z are 0, then make y 0 as well
+    for coord_idx, coord in enumerate(object_warped):
+        if coord[0] == 0 and coord[2] == 0:
+            object_warped[coord_idx, 1] = 0
+        else:
+            object_warped[coord_idx, 1] = obj_to_warp[coord_idx, 1] 
+
+    return object_warped
 
 # test tpsw
 if __name__ == "__main__":
