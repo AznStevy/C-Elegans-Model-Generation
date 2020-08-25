@@ -58,12 +58,14 @@ def thin_plate_spline_warp_xyz(warped_pts, ctrl_pts, obj_to_warp):
 def thin_plate_spline_warp_xz(warped_pts, ctrl_pts, obj_to_warp):
     object_warped = thin_plate_spline_warp_xyz(warped_pts, ctrl_pts, obj_to_warp)
 
+    y_diff = np.mean(ctrl_pts[:, 1]) - np.mean(warped_pts[:, 1])
+    
     # go through, if x, z are 0, then make y 0 as well
     for coord_idx, coord in enumerate(object_warped):
-        if coord[0] == 0 and coord[2] == 0:
+        if not np.any(coord):
             object_warped[coord_idx, 1] = 0
         else:
-            object_warped[coord_idx, 1] = obj_to_warp[coord_idx, 1] 
+            object_warped[coord_idx, 1] = obj_to_warp[coord_idx, 1] + y_diff
 
     return object_warped
 

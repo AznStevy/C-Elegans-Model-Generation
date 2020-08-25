@@ -78,8 +78,8 @@
         }
     },
     "data": {
-        "seam_cells": [
-                    "Y:\\RyanC\\model_building_code\\resources\\warping_models\\jul-11-2019_warping_model.json"
+    	"seam_cells":[
+    				"Y:\\RyanC\\model_building_code\\resources\\warping_models\\jul-11-2019_warping_model.json"
         			],
         "strains": [
             {
