@@ -46,6 +46,8 @@
 			}
 		},
 		"warping": {
+			"z_padding": 100,
+			"radial_correction": 2,
 			"seam_cells": [
 				"H0L", 
 				"H0R", 
@@ -70,7 +72,8 @@
 			]
 		},
 		"smoothing": {
-			"window_size": 150
+			"method": "sgolay",
+			"window_size": 100
 		},
 		"mipav_output": {
 			"labels_on": false,
@@ -78,15 +81,43 @@
 		}
 	},
 	"data": {
-		"seam_cells":[
+		"seam_cells": [
+					"Y:\\RyanC\\Cell Tracking Project\\Original Untwisting Paper\\DCR4221\\063014_lattices_Javier - UTP 1",
+					"Y:\\RyanC\\Cell Tracking Project\\Original Untwisting Paper\\DCR4221\\LE311_US_5min_3 - UTP 2\\Decon_reg",
+					"Y:\\RyanC\\Cell Tracking Project\\Original Untwisting Paper\\DCR4221\\LE311_US_5min_2 - UTP 3\\Decon_reg",
+					"Y:\\RyanC\\Cell Tracking Project\\Original Untwisting Paper\\DCR4221\\LE311_US_5min_4 - UTP 4\\Decon_reg",
+					"Y:\\RyanC\\Cell Tracking Project\\Original Untwisting Paper\\DCR4221\\LE311_US_5min_1 - UTP 5\\Decon_reg",
+					"Y:\\RyanC\\Cell Tracking Project\\OD1599_NU\\OD1599_MostRecent\\120619_Pos2\\Decon_reg",
+					"Y:\\RyanC\\Cell Tracking Project\\OD1599_NU\\OD1599_MostRecent\\112719_Pos3\\Decon_Reg",
+					"Y:\\RyanC\\Cell Tracking Project\\OD1599_NU\\OD1599_MostRecent\\112619_Pos0\\Decon_reg",
+					"Y:\\RyanC\\Cell Tracking Project\\DCR6485_RPM1_NU\\011419_Pos0\\Decon_reg",
+					"Y:\\RyanC\\Cell Tracking Project\\DCR6485_RPM1_NU\\011419_Pos4\\Decon_reg",
+					"Y:\\RyanC\\Cell Tracking Project\\DCR6485_RPM1_NU\\021020_Pos2\\Decon_Reg",
+					"Y:\\RyanC\\Cell Tracking Project\\JCC596_NU\\091119_Pos3\\Decon_registered",
+					"Y:\\RyanC\\Cell Tracking Project\\JCC596_NU\\091119_Pos2\\Decon_registered",
+					"Y:\\RyanC\\Cell Tracking Project\\JCC596_NU\\082619_Pos3\\Decon_registered",
+					"Y:\\RyanC\\Cell Tracking Project\\KP9305_NU\\073018_KP9305_NU\\Pos0",
+					"Y:\\RyanC\\Cell Tracking Project\\KP9305_NU\\073018_KP9305_NU\\Pos4",
+					"Y:\\RyanC\\Cell Tracking Project\\KP9305_NU\\073018_KP9305_NU\\Pos2",
+					"Y:\\RyanC\\Cell Tracking Project\\RW10131\\052918_Pos0",
+					"Y:\\RyanC\\Cell Tracking Project\\RW10131\\052918_Pos1",
+					"Y:\\RyanC\\Cell Tracking Project\\RW10896\\Post Twitching\\Pos1\\Decon_registered",
+					"Y:\\RyanC\\Cell Tracking Project\\RW10896\\Post Twitching\\Pos4\\Decon_registered",
+					"Y:\\RyanC\\Cell Tracking Project\\RW10896\\Post Twitching\\Pos6\\Decon_registered",
+					"Y:\\RyanC\\Cell Tracking Project\\RW10752_NU\\Untwisting\\031219_Pos2",
+					"Y:\\RyanC\\Cell Tracking Project\\RW10752_NU\\Untwisting\\031219_Pos1",
+					"Y:\\RyanC\\Cell Tracking Project\\RW10752_NU\\Untwisting\\022519_Pos0",
 					"Y:\\RyanC\\Cell Tracking Project\\RW10584\\051817\\Decon_reg",
 					"Y:\\RyanC\\Cell Tracking Project\\RW10584\\052517\\Decon_reg",
-					"Y:\\RyanC\\Cell Tracking Project\\RW10584\\101017\\Decon_reg"
-					],
+					"Y:\\RyanC\\Cell Tracking Project\\RW10584\\101017\\Decon_reg",
+					"Y:\\RyanC\\Cell Tracking Project\\RW10598\\Pos4-bgsub_95_iteration_5",
+					"Y:\\RyanC\\Cell Tracking Project\\RW10598\\598_Slitscan_6um_5min_Pos1",
+					"Y:\\RyanC\\Cell Tracking Project\\RW10598\\Pos0"				
+		],
 		"strains": [
 			{
 				"name": "OD1599_NU",
-				"include": false,
+				"include": true,
 				"folderpaths": [
 					"Y:\\RyanC\\Cell Tracking Project\\OD1599_NU\\OD1599_MostRecent\\120619_Pos2\\Decon_reg",
 					"Y:\\RyanC\\Cell Tracking Project\\OD1599_NU\\OD1599_MostRecent\\112719_Pos3\\Decon_Reg",
@@ -95,7 +126,7 @@
 			},
 			{
 				"name": "DCR6485_RPM1_NU",
-				"include": false,
+				"include": true,
 				"folderpaths": [
 					"Y:\\RyanC\\Cell Tracking Project\\DCR6485_RPM1_NU\\011419_Pos0\\Decon_reg",
 					"Y:\\RyanC\\Cell Tracking Project\\DCR6485_RPM1_NU\\011419_Pos4\\Decon_reg",
@@ -104,7 +135,7 @@
 			},
 			{
 				"name": "JCC596_NU",
-				"include": false,
+				"include": true,
 				"folderpaths": [
 					"Y:\\RyanC\\Cell Tracking Project\\JCC596_NU\\091119_Pos3\\Decon_registered",
 					"Y:\\RyanC\\Cell Tracking Project\\JCC596_NU\\091119_Pos2\\Decon_registered",
@@ -113,7 +144,7 @@
 			},            
 			{
 				"name": "KP9305_NU",
-				"include": false,
+				"include": true,
 				"folderpaths": [
 					"Y:\\RyanC\\Cell Tracking Project\\KP9305_NU\\073018_KP9305_NU\\Pos0",
 					"Y:\\RyanC\\Cell Tracking Project\\KP9305_NU\\073018_KP9305_NU\\Pos4",
@@ -122,7 +153,7 @@
 			},
 			{
 				"name": "RW10131",
-				"include": false,
+				"include": true,
 				"folderpaths": [
 					"Y:\\RyanC\\Cell Tracking Project\\RW10131\\052918_Pos0",
 					"Y:\\RyanC\\Cell Tracking Project\\RW10131\\052918_Pos1"
@@ -130,7 +161,7 @@
 			},
 			{
 				"name": "RW10896",
-				"include": false,
+				"include": true,
 				"folderpaths": [
 					"Y:\\RyanC\\Cell Tracking Project\\RW10896\\Post Twitching\\Pos1\\Decon_registered",
 					"Y:\\RyanC\\Cell Tracking Project\\RW10896\\Post Twitching\\Pos4\\Decon_registered",
@@ -139,7 +170,7 @@
 			},  
 			{
 				"name": "RW10752_NU",
-				"include": false,
+				"include": true,
 				"folderpaths": [
 					"Y:\\RyanC\\Cell Tracking Project\\RW10752_NU\\Untwisting\\031219_Pos2",
 					"Y:\\RyanC\\Cell Tracking Project\\RW10752_NU\\Untwisting\\031219_Pos1",
@@ -156,12 +187,23 @@
 				]
 			},
 			{
-				"name": "",
-				"include": false,
+				"name": "RW10598",
+				"include": true,
 				"folderpaths": [
-					"",
-					"",
-					""
+					"Y:\\RyanC\\Cell Tracking Project\\RW10598\\Pos4-bgsub_95_iteration_5",
+					"Y:\\RyanC\\Cell Tracking Project\\RW10598\\598_Slitscan_6um_5min_Pos1",
+					"Y:\\RyanC\\Cell Tracking Project\\RW10598\\Pos0"
+				]
+			},
+			{
+				"name": "DCR4221",
+				"include": true,
+				"folderpaths": [
+					"Y:\\RyanC\\Cell Tracking Project\\Original Untwisting Paper\\DCR4221\\063014_lattices_Javier - UTP 1",
+					"Y:\\RyanC\\Cell Tracking Project\\Original Untwisting Paper\\DCR4221\\LE311_US_5min_3 - UTP 2\\Decon_reg",
+					"Y:\\RyanC\\Cell Tracking Project\\Original Untwisting Paper\\DCR4221\\LE311_US_5min_2 - UTP 3\\Decon_reg",
+					"Y:\\RyanC\\Cell Tracking Project\\Original Untwisting Paper\\DCR4221\\LE311_US_5min_4 - UTP 4\\Decon_reg",
+					"Y:\\RyanC\\Cell Tracking Project\\Original Untwisting Paper\\DCR4221\\LE311_US_5min_1 - UTP 5\\Decon_reg"
 				]
 			}
 		]
