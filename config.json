@@ -47,7 +47,7 @@
 		},
 		"warping": {
 			"z_padding": 100,
-			"radial_correction": 2,
+			"radial_correction": 1,
 			"seam_cells": [
 				"H0L", 
 				"H0R", 
@@ -112,7 +112,10 @@
 					"Y:\\RyanC\\Cell Tracking Project\\RW10584\\101017\\Decon_reg",
 					"Y:\\RyanC\\Cell Tracking Project\\RW10598\\Pos4-bgsub_95_iteration_5",
 					"Y:\\RyanC\\Cell Tracking Project\\RW10598\\598_Slitscan_6um_5min_Pos1",
-					"Y:\\RyanC\\Cell Tracking Project\\RW10598\\Pos0"				
+					"Y:\\RyanC\\Cell Tracking Project\\RW10598\\Pos0",
+					"Y:\\RyanC\\Cell Tracking Project\\RW10375\\Untwisting\\010721_RW10375_Het\\RW10375_NU_Het\\RW10375_NU_Het\\Pos0\\SPIMB\\Reg_Sample\\ForTracking",
+					"Y:\\RyanC\\Cell Tracking Project\\RW10375\\Untwisting\\010721_RW10375_Het\\RW10375_NU_Het\\RW10375_NU_Het\\Pos1\\SPIMB\\Reg_Sample\\ForTracking",
+					"Y:\\RyanC\\Cell Tracking Project\\RW10375\\Untwisting\\010721_RW10375_Het\\RW10375_NU_Het\\RW10375_NU_Het\\Pos2\\SPIMB\\Reg_Sample\\ForTracking"	
 		],
 		"strains": [
 			{
@@ -204,6 +207,15 @@
 					"Y:\\RyanC\\Cell Tracking Project\\Original Untwisting Paper\\DCR4221\\LE311_US_5min_2 - UTP 3\\Decon_reg",
 					"Y:\\RyanC\\Cell Tracking Project\\Original Untwisting Paper\\DCR4221\\LE311_US_5min_4 - UTP 4\\Decon_reg",
 					"Y:\\RyanC\\Cell Tracking Project\\Original Untwisting Paper\\DCR4221\\LE311_US_5min_1 - UTP 5\\Decon_reg"
+				]
+			},
+			{
+				"name": "RW10375",
+				"include": true,
+				"folderpaths": [
+					"Y:\\RyanC\\Cell Tracking Project\\RW10375\\Untwisting\\010721_RW10375_Het\\RW10375_NU_Het\\RW10375_NU_Het\\Pos0\\SPIMB\\Reg_Sample\\ForTracking",
+					"Y:\\RyanC\\Cell Tracking Project\\RW10375\\Untwisting\\010721_RW10375_Het\\RW10375_NU_Het\\RW10375_NU_Het\\Pos1\\SPIMB\\Reg_Sample\\ForTracking",
+					"Y:\\RyanC\\Cell Tracking Project\\RW10375\\Untwisting\\010721_RW10375_Het\\RW10375_NU_Het\\RW10375_NU_Het\\Pos2\\SPIMB\\Reg_Sample\\ForTracking"
 				]
 			}
 		]
