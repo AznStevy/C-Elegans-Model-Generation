@@ -15,16 +15,22 @@ macro bind(def, element)
 end
 
 # ╔═╡ e46fff10-1c3a-11ee-2bf2-23ea9eea5c3b
-using JSON3, Plots, Makie, PlutoUI, JSServe, PlotlyJS
+using JSON3, Plots, Makie, PlutoUI, JSServe, PlotlyJS, Statistics, LinearAlgebra
 
 # ╔═╡ 04a0e0b6-2eb8-41d3-b024-d3fdca7c7720
-gr()
+plotly()
 
 # ╔═╡ 946667a3-dd24-4c62-8755-36371c9184f6
 begin
 	const workspace_root = raw"D:\shroff\python_model_building\C-Elegans-Model-Generation\workspace"
-	config_sets = readdir(workspace_root)
+	config_sets = reverse(readdir(workspace_root))
 	md"Dataset: $(@bind dataset Select(config_sets))"
+end
+
+# ╔═╡ 22f56929-e2cf-4d8c-acf0-a3b07166c00d
+begin
+	config = JSON3.read(joinpath(dirname(workspace_root), "config.json"))
+	total_min = config[:settings][:interpolation][:total_min]
 end
 
 # ╔═╡ 948dec25-5c59-4e39-b9ab-077f3ca678af
@@ -35,20 +41,38 @@ end
 
 # ╔═╡ ad19829b-ae12-4ad1-b007-a1f039c2d9fa
 begin
-	json_data = map(json_files) do json_file
-		JSON3.read(joinpath(dataset_dir,json_file))
+	json_data_by_file = Dict{String,JSON3.Object}()
+	for json_file in json_files
+		json_data_by_file[json_file] = JSON3.read(joinpath(dataset_dir,json_file))
+	end
+	json_data = Vector{JSON3.Object}(undef, 7)
+	for json_file in json_files
+		step_number = parse(Int, json_file[1])
+		if step_number == 4 && contains(json_file, "unsmoothed")
+			continue
+		end
+		json_data[step_number] = json_data_by_file[json_file]
 	end
 	nothing
 end
 
 # ╔═╡ ded6ebd5-9cef-4cda-bd54-7b4a1db30e24
-md"Strain: $(@bind strain Select(String.(keys(json_data[1]))))"
+begin
+	strains = keys(json_data[1])
+	md"Strain: $(@bind strain Select(String.(strains)))"
+end
 
 # ╔═╡ 4d6a5e32-14fb-421d-b6dd-224e919f099d
 md"Position: $(@bind position Select(String.(keys(json_data[1][strain]))))"
 
+# ╔═╡ 71d67214-0dc2-49ad-9073-52bb9f9ea43e
+filter(!=(:cell_key), keys(json_data[1][strain][position]))
+
 # ╔═╡ 262a00ee-5407-4dbd-ae21-5d50110763e1
-md"Cell type: $(@bind celltype Select(String.(keys(json_data[1][strain][position]))))"
+begin
+	cell_types = filter(!=(:cell_key), keys(json_data[1][strain][position]))
+	md"Cell type: $(@bind celltype Select(String.(cell_types)))"
+end
 
 # ╔═╡ 6926d174-0d1d-4c6c-9303-1aa788558a20
 json_data[4][:coordinates]
@@ -63,7 +87,7 @@ md"Cell: $(@bind cell Select(String.(keys(json_data[1][strain][position][celltyp
 begin
 	coordinates1 = json_data[1][strain][position][celltype][cell][:coordinates]
 	coordinates2 = json_data[2][strain][position][celltype][cell][:coordinates]
-	coordinates6 = json_data[6][strain][position][celltype][cell][:coordinates]
+	#coordinates6 = json_data[6][strain][position][celltype][cell][:coordinates]
 	X = x->x[1]
 	Y = x->x[2]
 	Z = x->x[3]
@@ -79,7 +103,43 @@ end
 
 # ╔═╡ 2473d601-58b4-4927-9fff-5415565ce308
 begin
+	steps = Dict(
+		2 => "Check for Outliers",
+		3 => "Interpolate each to time scale",
+		4 => "Generate seam cell warping model",
+		5 => "Warp strains to warping model",
+		6 => "Reformat data to average points",
+		7 => "Perform spatial moving average for each cell"
+	)
 	md"Step: $(@bind step Select(string.(2:7)))"
+end
+
+# ╔═╡ 938de151-bcf0-4e5e-9d90-627e9ac0fa9f
+begin
+	legend_positions = [:top, :left, :right, :bottom, :none]
+	md"Legend: $(@bind legend Select(legend_positions))"
+end
+
+# ╔═╡ 7c721e00-e238-44de-92b8-fa214d8bd061
+html"""
+<style>
+input[type*="range"] {
+	width: 100%;
+}
+</style>
+"""
+
+# ╔═╡ 5fe70f9e-7c57-4680-9575-284cb2ed4f70
+begin
+	Plots.plot(XYZ_stack(json_data[7][:mean][celltype][cell]), layout=(3,1), label = ["x7" "y7" "z7"], ylabel="Coordinate", legend=:left)
+	Plots.xlabel!("Time")
+end
+
+# ╔═╡ d9d16f4f-9c35-4e91-80f1-37b1b8fa408c
+begin
+	md"""
+	Timepoint: $(@bind timepoint PlutoUI.Slider(1:total_min; show_value = true))
+	"""
 end
 
 # ╔═╡ be03cbbc-1e75-43d9-b191-2e93c6247035
@@ -87,35 +147,370 @@ begin
 	h = nothing
 	#step = 6
 	istep = parse(Int, step)
-	if istep ∈ (2,3)
+	seam_cell_to_idx_dict = Dict(json_data[4][:seam_cells] .=> 1:length(json_data[4][:seam_cells]))
+	h = if istep ∈ (2,3)
 	#for position in keys(json_data[step][strain])
-		h = Plots.plot(XYZ_stack(json_data[istep][strain][position][celltype][cell][:coordinates]), label = string.((position,), " ", ["x" "y" "z"]), legend=:outerbottom)
-		title!("Step $step")
+		XYZ_data = XYZ_stack(json_data[istep][strain][position][celltype][cell][:coordinates])
+		h = Plots.plot(XYZ_data, label = string.((position,), " ", ["x" "y" "z"]), legend=Symbol(legend))
+		title!("Step $step: $(steps[istep])")
+		Plots.xlabel!("Time")
 	#end
 		h
-	elseif istep == 4
-		
+	elseif istep ∈ (4,)
+		seam_cell_idx = seam_cell_to_idx_dict[cell]
+		XYZ_data = XYZ_stack((x->x[seam_cell_idx]).(json_data[4][:coordinates]))
+		h = Plots.plot(XYZ_data, label = string.((position,), " ", ["x" "y" "z"]), legend=Symbol(legend))
+		title!("Step $step: $(steps[istep])")
+		Plots.xlabel!("Time")
+		h
+	elseif istep ∈ (5,)
+		XYZ_data = XYZ_stack(json_data[istep][strain][position][celltype][cell][:coordinates])
+		h = Plots.plot(XYZ_data, label = string.((position,), " ", ["x" "y" "z"]), legend=Symbol(legend))
+		title!("Step $step: $(steps[istep])")
+		Plots.xlabel!("Time")
+		h
+	elseif istep ∈ (6,7)
+		XYZ_data = XYZ_stack(json_data[istep][:mean][celltype][cell])
+		#XYZ_upper = XYZ_stack(json_data[istep][:ci_95_upper][celltype][cell])
+		#XYZ_lower = XYZ_stack(json_data[istep][:ci_95_lower][celltype][cell])
+		h = Plots.plot(XYZ_data, label = string.((position,), " ", ["x" "y" "z"]), legend=Symbol(legend))
+		#Plots.plot!(XYZ_upper, label = string.((position,), " ", ["x" "y" "z"], "_upper"), legend=Symbol(legend))
+		#Plots.plot!(XYZ_lower, label = string.((position,), " ", ["x" "y" "z"], "_lower"), legend=Symbol(legend))
+		title!("Step $step: $(steps[istep])")
+		Plots.xlabel!("Time")
+		h
+	end
+	Plots.vline!([timepoint])
+	h
+end
+
+# ╔═╡ c61b00a1-ed71-4385-90d9-957d36889f1e
+begin
+	if false
+		spatial_data = Dict{Symbol, Vector{Vector{Float64}}}()
+		for celltype in keys(json_data[7][:mean])
+			celltype_data = json_data[7][:mean][celltype]
+			spatial_data[celltype] = Vector{Float64}[]
+			for cell in keys(celltype_data)
+				push!(spatial_data[celltype], celltype_data[cell][timepoint])
+			end
+		end
+		SX = (x->x[1]).(spatial_data[:seam_cells])
+		SY = (x->x[2]).(spatial_data[:seam_cells])
+		SZ = (x->x[3]).(spatial_data[:seam_cells])
+		AX = (x->x[1]).(spatial_data[:annotations])
+		AY = (x->x[2]).(spatial_data[:annotations])
+		AZ = (x->x[3]).(spatial_data[:annotations])
+		hs = Plots.scatter(SZ, SX, label = "Seam Cells")
+		#Plots.scatter!(AZ, AX, label = "Annotations")
+		Plots.xlims!((0,1200))
+		hs
 	end
 end
 
-# ╔═╡ 5fe70f9e-7c57-4680-9575-284cb2ed4f70
-Plots.plot(XYZ_stack(json_data[7][:mean][celltype][cell]), layout=(3,1), label = ["x7" "y7" "z7"], legend=:topright)
-
-# ╔═╡ 0e66f889-7e63-4f0d-88e6-19bc17b4f06a
-json_data[4][:mean][celltype]
-
 # ╔═╡ fc61875c-0fdc-48ed-9a20-906693a2a65e
-json_data[4][:coordinates] |> length
+begin
+	timepoints = 1:total_min
+	warp_to_seam_cell_names = json_data[4][:seam_cells]
+	warp_to_seam_cell_coords = json_data[4][:coordinates]
+	#=
+	for strain in strains
+		for pos in keys(json_data[3][strain])
+			for timepoint in timepoints
+	            # get warp from/to model at timepoint (the seam cells)
+	            pos_seam_cells = json_data[3][strain][pos][:seam_cells]
+
+				for warp_to_seam_cell_name in warp_to_seam_cell_names
+					warp_seam_cell_idx = seam_cell_to_idx_dict[warp_to_seam_cell_name]
+					if warp_to_seam_cell_name in keys(pos_seam_cells)
+						all_time_coordinates = pos_seam_cells[warp_to_seam_cell_name][:coordinates]
+						warp_from_timepoint_coord = all_time_coordinates[timepoint]
+		
+			            warp_to_at_timepoint = warp_to_seam_cell_coords[timepoint] # contains all warping data
+						warp_to_coords = warp_to_at_timepoint[seam_cell_to_idx_dict[warp_to_seam_cell_name]]
+					end
+				end
+				
+
+	            
+	            # however, we might not need/have all the data so here we match what we have
+	            warp_to = []
+	            warp_from = []
+			end
+		end
+	end
+	pairs(warp_to_seam_cell_names)
+	=#
+end
+
+# ╔═╡ b700fdb2-aeed-45b3-a040-6255315b550f
+begin
+	warp_from = map(warp_to_seam_cell_names) do cell
+		pos_seam_cells = json_data[3][strain][position][:seam_cells]
+		all_time_coordinates = pos_seam_cells[cell][:coordinates]
+		warp_from_timepoint_coord = all_time_coordinates[timepoint]
+	end |> stack |> transpose
+end
+
+# ╔═╡ f30b02f4-a12a-4306-a40a-2b6ed216ab72
+begin
+	warp_to = map(warp_to_seam_cell_names) do cell
+		warp_to_at_timepoint = warp_to_seam_cell_coords[timepoint]
+		warp_to_coords = warp_to_at_timepoint[seam_cell_to_idx_dict[cell]]
+	end |> stack |> transpose
+end
+
+# ╔═╡ 6a7d2cc0-3d29-4657-a386-3e05cac72ac4
+begin
+	shift_from_center = mean(warp_from; dims=1)
+	shift_from_center[3] = 0
+	shift_from_center
+end
+
+# ╔═╡ 88dff51d-73a3-4e69-8985-4a8888fb846e
+begin
+	shift_to_center = mean(warp_to; dims=1)
+	shift_to_center[3] = 0
+	shift_to_center
+end
+
+# ╔═╡ dcbdaa9c-0990-4eea-86a1-9db580bbc457
+warp_from_shifted = warp_from .+ shift_to_center .- shift_from_center
+
+# ╔═╡ af86f05a-b185-4afc-96af-33ff1619a1ff
+#=
+def thin_plate_spline_warp(unwarped_pts, ctrl_pts, obj_to_warp):
+
+    # convert everything to np array
+    unwarped_pts = np.array(unwarped_pts)
+    ctrl_pts = np.array(ctrl_pts)
+    obj_to_warp = np.array(obj_to_warp)
+
+    num_points = unwarped_pts.shape[0]
+    K = np.zeros((num_points, num_points))
+    for rr in np.arange(num_points):
+        for cc in np.arange(num_points):
+            K[rr,cc] = np.sum(np.subtract(unwarped_pts[rr,:], unwarped_pts[cc,:])**2) #R**2 
+            K[cc,rr] = K[rr,cc]
+
+    #calculate kernel function R
+    K = np.maximum(K, 1e-320) 
+    #K = K.* log(sqrt(K))
+    K = np.sqrt(K) #
+    # Calculate P matrix
+    P = np.hstack((np.ones((num_points, 1)), unwarped_pts)) #nX4 for 3D
+    # Calculate L matrix
+    L_top = np.hstack((K, P))
+    L_bot = np.hstack((P.T, np.zeros((4,4))))
+    L = np.vstack((L_top, L_bot))
+
+    param = np.matmul(np.linalg.pinv(L), np.vstack((ctrl_pts, np.zeros((4,3)))))
+    # Calculate new coordinates (x',y',z') for each points 
+    num_points_obj = obj_to_warp.shape[0]
+
+    K = np.zeros((num_points_obj, num_points))
+    gx = obj_to_warp[:,0]
+    gy = obj_to_warp[:,1]
+    gz = obj_to_warp[:,2]
+
+    for nn in np.arange(num_points):
+        K[:,nn] = \
+        np.square(np.subtract(gx, unwarped_pts[nn,0])) + \
+        np.square(np.subtract(gy, unwarped_pts[nn,1])) + \
+        np.square(np.subtract(gz, unwarped_pts[nn,2])) # R**2
+ 
+    K = np.maximum(K, 1e-320) 
+    K = np.sqrt(K) #|R| for 3D
+    gx = np.vstack(obj_to_warp[:,0])
+    gy = np.vstack(obj_to_warp[:,1])
+    gz = np.vstack(obj_to_warp[:,2])
+    P = np.hstack((np.ones((num_points_obj,1)), gx, gy, gz))
+    L = np.hstack((K, P))
+    object_warped = np.matmul(L, param)
+    object_warped[:,0] = np.round(object_warped[:,0]*10**3)*10**-3
+    object_warped[:,1] = np.round(object_warped[:,1]*10**3)*10**-3
+    object_warped[:,2] = np.round(object_warped[:,2]*10**3)*10**-3
+
+    return object_warped
+=#
+function thin_plate_spline_warp(unwarped_pts, ctrl_pts, obj_to_warp=nothing)
+	num_points = size(unwarped_pts, 1)
+	K = zeros(num_points,num_points)
+	for cc in 1:num_points, rr in 1:num_points
+		if rr < cc
+			#K[rr,cc] = sum((unwarped_pts[rr,:] .- unwarped_pts[cc,:]).^2)
+			K[rr,cc] = norm(unwarped_pts[rr,:] .- unwarped_pts[cc,:])
+			K[cc,rr] = K[rr,cc]
+		end
+	end
+	K = max.(K, sqrt(1e-320))
+	#K = max.(K, 1e-320)
+	#K = sqrt.(K)
+
+	P = [ones(num_points) unwarped_pts]
+	#L_top = [K P]
+	#L_bot = [transpose(P) zeros(4,4)]
+	#L = [L_top; L_bot]
+	L = [K P ; transpose(P) zeros(4,4)]
+
+	param = L\[ctrl_pts; zeros(4,3)]
+
+	# Calculate new coordinates (x',y',z') for each points 
+	num_points_obj = size(obj_to_warp,1)
+	K = zeros(num_points_obj, num_points)
+
+	for nn in 1:num_points
+		K[:,nn] .= sum((obj_to_warp .- unwarped_pts[[nn],:]).^2; dims=2)
+	end # R^2 
+
+	K = max.(K, 1e-320)
+	K = sqrt.(K)
+
+	# Alternative
+	# dist((x,y)) = norm(x .- y)
+	# K = dist.(Iterators.product(eachrow([0 0 0; 1 1 1]), eachrow(warp_from)))
+	
+	P = [ones(num_points_obj) obj_to_warp[:,1] obj_to_warp[:,2] obj_to_warp[:,3]]
+	L = [K P]
+	object_warped = L * param
+	return round.(object_warped; digits = 3)
+end
+
+# ╔═╡ dd28ad8a-cef7-473f-a32f-d8b142cd0321
+begin
+	dist((x,y)) = norm(x .- y)
+	dist.(Iterators.product(eachrow([0 0 0; 1 1 1]), eachrow(warp_from)))
+end
+
+# ╔═╡ d8afda7f-d35f-4d93-9b26-dbe0793532ff
+warp_from_shifted, warp_to
+
+# ╔═╡ 31038347-f0b8-4fe6-8147-47e7f140e3d3
+#=
+def thin_plate_spline_warp_c_elegans(unwarped_pts, ctrl_pts, obj_to_warp):
+    """Shifts the control points (centered at x=0, y=0) to the (positive) unwarped pts which are also coplanar. 
+    The warp must be in first octant. Performs a y correction by creating virtual vertical seam cells.
+    Finally, shifts everything to be centered at x=0, y=0 again.
+    """
+    # for easy swapping later if necessary
+    shift_from_points = ctrl_pts # at center
+    shift_to_points = unwarped_pts # some positive coord
+    
+    # calculate the x-y centers of each
+    shift_from_center = (np.mean(shift_from_points[:, 0]), 
+                         np.mean(shift_from_points[:, 1]))
+    shift_to_center = (np.mean(shift_to_points[:, 0]), 
+                       np.mean(shift_to_points[:, 1]))  
+    
+    # bring everything up to the unwarped plane in x and y. z is length-wise
+    shift_from_pts_og = copy.deepcopy(shift_from_points)
+    shift_from_shifted = copy.deepcopy(shift_from_points) # are centered
+    shift_from_shifted[:, 0] = shift_from_pts_og[:, 0] + (shift_to_center[0] - shift_from_center[0])
+    shift_from_shifted[:, 1] = shift_from_pts_og[:, 1] + (shift_to_center[1] - shift_from_center[1])
+    
+    # perform warp
+    object_warped = thin_plate_spline_warp(unwarped_pts, shift_from_shifted, obj_to_warp)
+    
+    # set y back to what it was/ignore the y-plane in warping.
+    object_warped[:, 1] = obj_to_warp[:, 1]
+    
+    # shift everything down to axis. currently at shift_from_shifted
+    # print(shift_to_center, shift_from_center)
+    object_warped[:, 0] -= shift_to_center[0] # - shift_from_center[0]) # subtract what was added
+    object_warped[:, 1] -= shift_to_center[1] # - shift_from_center[1])
+
+
+    # reset any coords that were at 0.
+    for coord_idx, coord in enumerate(obj_to_warp):
+        # if at the origin, then keep y at origin too
+        if coord[0] == 0 and coord[2] == 0:
+            object_warped[coord_idx, 1] = 0
+            
+    return object_warped
+=#
+function thin_plate_spline_warp_c_elegans(unwarped_pts, ctrl_pts, obj_to_warp)
+	shift_from_points = ctrl_pts # at center
+	shift_to_points = unwarped_pts # some positive coord
+
+	# calculate the x-y centers of each
+	shift_from_center = mean(shift_from_points; dims=1)
+	shift_to_center = mean(shift_to_points; dims=1)
+
+	shift_from_pts_og = shift_from_points
+	#shift_from_shifted = copy(shift_from_points)
+
+	shift_from_shifted = shift_from_pts_og .+ shift_to_center .- shift_from_center
+	shift_from_shifted[:,3] .= shift_from_pts_og[:,3]
+
+	object_warped = thin_plate_spline_warp(unwarped_pts, shift_from_shifted, obj_to_warp)
+
+	# set y back to what it was/ignore the y-plane in warping.
+	object_warped[:, 2] = obj_to_warp[:, 2]
+
+	# shift everything down to axis. currently at shift_from_shifted
+	object_warped[:,1] .-= shift_to_center[1]
+	object_warped[:,2] .-= shift_to_center[2]
+
+	# reset any coords that were at 0.
+	for (coord_idx, coord) in enumerate(eachrow(obj_to_warp))
+		if coord[1] == 0 && coord[3] == 0
+			object_warped[coord_idx, 1] = 0
+		end
+	end
+	
+	return object_warped
+end
+
+# ╔═╡ 23b6b7cb-6d2b-4d9a-9ea5-3fdeb48fefda
+begin
+	prewarp = collect(json_data[3][strain][position][celltype][cell][:coordinates][timepoint])
+	#prewarp[1:2] = mean(warp_from; dims=1)[1:2]
+	prewarp
+end
+
+# ╔═╡ 7430f240-1977-4f75-8296-8f76ccf20c11
+thin_plate_spline_warp(warp_from_shifted, warp_to, transpose(prewarp))
+
+# ╔═╡ c62498eb-583e-432b-a449-e57bcf11bf3b
+thin_plate_spline_warp_c_elegans(warp_from, warp_to, transpose(prewarp))
+
+# ╔═╡ 2037b5ea-fcc5-4e8a-b837-bb435df7b8b5
+begin
+	function zero_y(A)
+		B = copy(A)
+		B[:,2] .= 0.1
+		return B
+	end
+	function zero_xy(A)
+		B = copy(A)
+		B[:,1] .= 3.1
+		B[:,2] .= 5.1
+		return B
+	end
+	thin_plate_spline_warp_c_elegans(zero_y(warp_from), zero_y(warp_to), zero_y(transpose(prewarp)))
+	nothing
+end
+
+# ╔═╡ b4156c7d-5b8d-407b-93df-785f122d1a2f
+json_data[5][strain][position][celltype][cell][:coordinates][timepoint]
+
+# ╔═╡ e44d6a00-d5f1-45a7-abb7-e88956252d5b
+WithIOContext(warp_to, :displaysize => (20,3))
+
+# ╔═╡ 835d809c-6689-42e7-879c-45df9c2a8b27
+WithIOContext(warp_from; :displaysize => (20,3))
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 JSON3 = "0f8b85d8-7281-11e9-16c2-39a750bddbf1"
 JSServe = "824d6782-a2ef-11e9-3a09-e5662e0c26f9"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
 PlotlyJS = "f0f68f2c-4968-5e81-91da-67840de0976a"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
+Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 
 [compat]
 JSON3 = "~1.13.1"
@@ -132,7 +527,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.9.1"
 manifest_format = "2.0"
-project_hash = "973488a746c5e2e4e1b087f44e786a8bf7825fe1"
+project_hash = "abe284aa376d4f4315700d6d78a9b2b702a64392"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -1906,22 +2301,43 @@ version = "1.4.1+0"
 """
 
 # ╔═╡ Cell order:
-# ╟─e46fff10-1c3a-11ee-2bf2-23ea9eea5c3b
-# ╟─04a0e0b6-2eb8-41d3-b024-d3fdca7c7720
-# ╟─946667a3-dd24-4c62-8755-36371c9184f6
+# ╠═e46fff10-1c3a-11ee-2bf2-23ea9eea5c3b
+# ╠═04a0e0b6-2eb8-41d3-b024-d3fdca7c7720
+# ╠═946667a3-dd24-4c62-8755-36371c9184f6
+# ╠═22f56929-e2cf-4d8c-acf0-a3b07166c00d
 # ╟─948dec25-5c59-4e39-b9ab-077f3ca678af
-# ╟─ad19829b-ae12-4ad1-b007-a1f039c2d9fa
+# ╠═ad19829b-ae12-4ad1-b007-a1f039c2d9fa
 # ╟─ded6ebd5-9cef-4cda-bd54-7b4a1db30e24
 # ╟─4d6a5e32-14fb-421d-b6dd-224e919f099d
+# ╠═71d67214-0dc2-49ad-9073-52bb9f9ea43e
 # ╟─262a00ee-5407-4dbd-ae21-5d50110763e1
 # ╟─979e25fc-d5b9-4941-99f0-48f5f0b50948
 # ╟─6926d174-0d1d-4c6c-9303-1aa788558a20
 # ╟─81a486de-3878-4233-955b-59a80b4cf2b5
-# ╟─4b41d8e7-b965-4025-b7ce-0225200d39ae
+# ╠═4b41d8e7-b965-4025-b7ce-0225200d39ae
 # ╟─2473d601-58b4-4927-9fff-5415565ce308
-# ╠═be03cbbc-1e75-43d9-b191-2e93c6247035
+# ╟─938de151-bcf0-4e5e-9d90-627e9ac0fa9f
+# ╟─7c721e00-e238-44de-92b8-fa214d8bd061
+# ╟─d9d16f4f-9c35-4e91-80f1-37b1b8fa408c
+# ╟─be03cbbc-1e75-43d9-b191-2e93c6247035
 # ╠═5fe70f9e-7c57-4680-9575-284cb2ed4f70
-# ╠═0e66f889-7e63-4f0d-88e6-19bc17b4f06a
-# ╠═fc61875c-0fdc-48ed-9a20-906693a2a65e
+# ╟─c61b00a1-ed71-4385-90d9-957d36889f1e
+# ╟─fc61875c-0fdc-48ed-9a20-906693a2a65e
+# ╠═b700fdb2-aeed-45b3-a040-6255315b550f
+# ╠═f30b02f4-a12a-4306-a40a-2b6ed216ab72
+# ╠═6a7d2cc0-3d29-4657-a386-3e05cac72ac4
+# ╠═88dff51d-73a3-4e69-8985-4a8888fb846e
+# ╠═dcbdaa9c-0990-4eea-86a1-9db580bbc457
+# ╟─af86f05a-b185-4afc-96af-33ff1619a1ff
+# ╠═dd28ad8a-cef7-473f-a32f-d8b142cd0321
+# ╠═7430f240-1977-4f75-8296-8f76ccf20c11
+# ╠═d8afda7f-d35f-4d93-9b26-dbe0793532ff
+# ╠═31038347-f0b8-4fe6-8147-47e7f140e3d3
+# ╠═c62498eb-583e-432b-a449-e57bcf11bf3b
+# ╟─2037b5ea-fcc5-4e8a-b837-bb435df7b8b5
+# ╠═23b6b7cb-6d2b-4d9a-9ea5-3fdeb48fefda
+# ╠═b4156c7d-5b8d-407b-93df-785f122d1a2f
+# ╠═e44d6a00-d5f1-45a7-abb7-e88956252d5b
+# ╠═835d809c-6689-42e7-879c-45df9c2a8b27
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
